@@ -29,9 +29,9 @@ With the mimic dict, it's fairly easy to emit random
 text that mimics the original. Print a word, then look
 up what words might come next and pick one at random as
 the next word.
-Use the empty string as the first word to prime things.
-If we ever get stuck with a word that is not in the dict,
-go back to the empty string to keep things moving.
+# Use the empty string as the first word to prime things.
+# If we ever get stuck with a word that is not in the dict,
+# go back to the empty string to keep things moving.
 
 Note: the standard python module 'random' includes a
 random.choice(list) method which picks a random element
@@ -46,46 +46,70 @@ columns, so the output looks better.
 import random
 import sys
 
-__author__ = "???"
+__author__ = "Detrich"
 
 
 def create_mimic_dict(filename):
-    """Returns mimic dict mapping each word to list of words which follow it. 
-    For example:
-        Input: "I am a software developer, and I don't care who knows"
-        Output: 
-            {
-                "" : ["I"],
-                "I" : ["am", "don't"], 
-                "am": ["a"], 
-                "a": ["software"],
-                "software" : ["developer,"],
-                "developer," : ["and"],
-                "and" : ["I"],
-                "I" : ["don't"],
-                "don't" : ["care"],
-                "care" : ["who"],
-                "who" : ["knows"]
-            }
-    """
+    Mimic = {}
+    with open(filename, "r") as f:
+        f_contents = f.read().split()
+        Mimic[""] = f_contents[0]
+        for i in range(len(f_contents)-1):
+            if not f_contents[i] in Mimic:
+                Mimic[f_contents[i]] = [f_contents[i+1]]
+            else:
+                Mimic[f_contents[i]] += [f_contents[i+1]]
+    return Mimic
+
+    # """Returns mimic dict mapping each word to list of words which follow it.
+    # For example:
+    #     Input: "I am a software developer, and I don't care who knows"
+    #     Output:
+    #         {
+    #             "" : ["I"],
+    #             "I" : ["am", "don't"],
+    #             "am": ["a"],
+    #             "a": ["software"],
+    #             "software" : ["developer,"],
+    #             "developer," : ["and"],
+    #             "and" : ["I"],
+    #             "I" : ["don't"],
+    #             "don't" : ["care"],
+    #             "care" : ["who"],
+    #             "who" : ["knows"]
+    #         }
+    # """
     # +++your code here+++
-    
+
 
 def print_mimic(mimic_dict, start_word):
-    """Given a previously compiled mimic_dict and start_word, prints 200 random words:
-        - Print the start_word
-        - Lookup the start_word in your mimic_dict and get it's next-list
-        - Randomly select a new word from the next-list
-        - Repeat this process 200 times
-    """
+    newList = [start_word]
+    print(start_word)
+    for i in range(200):
+        if newList[-1] not in mimic_dict:
+            newList.append(mimic_dict[start_word])
+        else:
+            newList.append(random.choice(mimic_dict[newList[-1]]))
+    print(" ".join(newList[2:]))
+
+#  Use the empty string as the first word to prime things.
+# If we ever get stuck with a word that is not in the dict,
+# go back to the empty string to keep things moving.
+    # """Given a previously compiled mimic_dict and start_word, prints 200 random words:
+    #     - Print the start_word
+    #     - Lookup the start_word in your mimic_dict and get it's next-list
+    #     - Randomly select a new word fr
+    # om the next-list
+    #     - Repeat this process 200 times
+    # """
     # +++your code here+++
-    pass
+
 
 
 # Provided main(), calls mimic_dict() and mimic()
 def main():
     if len(sys.argv) != 2:
-        print 'usage: python mimic.py file-to-read'
+        print('usage: python mimic.py file-to-read')
         sys.exit(1)
 
     d = create_mimic_dict(sys.argv[1])
